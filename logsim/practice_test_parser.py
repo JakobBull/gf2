@@ -32,6 +32,19 @@ def main():
         print(path)    #print path
         names = Names()
         scan = Scanner(path, names)
+        print("scanning from: " + path)
+        print("")
+        print("type\tid\tline#\tstart_char#\tend_char#\tstring")
+        while True:
+            symbol = scan.get_symbol()
+            print(symbol.type, end="\t")
+            print(symbol.id, end="\t")
+            print(symbol.line_number, end="\t")
+            print(symbol.start_char_number, end="\t\t")
+            print(symbol.end_char_number, end="\t\t")
+            print(symbol.string)
+            if(symbol.type == scan.EOF):
+                break
         parse = Parser(names, scan)
         parse.parse_network()
 
