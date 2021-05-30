@@ -11,6 +11,26 @@ class Parser:
         8: "NAME",
         9: "EOF",
     }
+    id_dict = {
+        0: "NETWORK",
+        1: "DEVICES",
+        2: "CLOCK",
+        3: "SWITCH",
+        4: "DTYPE",
+        5: "AND",
+        6: "NAND",
+        7: "NOR",
+        8: "OR",
+        9: "XOR",
+        10: "CONNECTIONS",
+        11: "SIGNALS",
+        12: "SETSIGNALS",
+        13: "SETCLOCK",
+        14: "MONITOR",
+        15: "starttime",
+        16: "period",
+        17: "firstchange"
+    }
     def __init__(self, names, scanner):
         """Initialise constants."""
         self.names = names
@@ -78,7 +98,7 @@ class Parser:
                     line_output.append(self.symbol.id)
                     i += 1
                 elif (expected_keyword_name_number_list[i] is not None):
-                    raise TypeError(
+                    print(
                         "Wrong keyword! at " + self.symbol.string +
                         " on line " + str(self.symbol.line_number) +
                         " and character " + str(self.symbol.start_char_number) +
@@ -95,7 +115,7 @@ class Parser:
                         "Wrong number! at " + self.symbol.string +
                         " on line " + str(self.symbol.line_number) +
                         " and character " + str(self.symbol.start_char_number) +
-                        "\n expected numbers in the range: " + str(expected_keyword_name_number_list[i]) +
+                        "\n expected numbers in the range: " + str(string_of_dict_range(expected_keyword_name_number_list[i], self.id_dict)) +
                         " but got : " + str(self.symbol.string)
                     )
             elif (self.symbol.type is 8):
@@ -108,7 +128,7 @@ class Parser:
                         "Wrong name! at " + self.symbol.string +
                         " on line " + str(self.symbol.line_number) +
                         " and character " + str(self.symbol.start_char_number) +
-                        "\n expected names with id: " + str(expected_keyword_name_number_list[i]) +
+                        "\n expected names with id: " + str(string_of_dict_range(expected_keyword_name_number_list[i], self.id_dict)) +
                         " but got id: " + str(self.symbol.id)
                     )
 
@@ -118,3 +138,9 @@ class Parser:
                 i = 0
             else:
                 i += 1
+
+    def string_of_dict_range(range, dict):
+        string = ""
+        for i in range:
+            string += dict.get(i)
+        return string
