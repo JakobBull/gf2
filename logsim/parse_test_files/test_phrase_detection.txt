@@ -1,0 +1,4 @@
+SW1 = SWITCH;
+SW2 = SWITCH;
+G1 - NAND;
+G2 = NAND;
