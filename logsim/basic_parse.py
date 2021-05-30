@@ -1,11 +1,23 @@
 class Parser:
+    type_dict = {
+        0: "{",
+        1: "}",
+        2: "=",
+        3: ".",
+        4: "-",
+        5: ":",
+        6: "KEYWORD",
+        7: "NUMBER",
+        8: "NAME",
+        9: "EOF",
+    }
     def __init__(self, names, scanner):
         """Initialise constants."""
         self.names = names
         self.scanner = scanner
         self.symbol = None
 
-    def phrase_detection(self, phrase_type_list, end_detection = 1):
+    def phrase_detection(self, phrase_type_list, expected_keyword_name_number_list, end_detection = 1):
         """
         checks if lines are all of a certain phrase type
 
@@ -20,6 +32,10 @@ class Parser:
         phrase_detection will return a list of a list of essential data from
         phrase that will allow for collection of key data for each phrase
 
+        expected_keyword_name_number_list is a list of length equal to phrase_type_list,
+        of lists of acceptable keywords, names and numbers to follow the expected phrase_type_list.
+        keywords and names are specified by ID, numbers are specified by strings.
+
         end_detection is the type which will terminate the repeated search
         for the phrase, which is set to "}" by default
 
@@ -33,18 +49,6 @@ class Parser:
             list of: ids of all names that occur in a phrase, or string for all
             numbers that occur in a phrase
         """
-        type_dict = {
-            0: "{",
-            1: "}",
-            2: "=",
-            3: ".",
-            4: "-",
-            5: ":",
-            6: "KEYWORD",
-            7: "NUMBER",
-            8: "NAME",
-            9: "EOF",
-        }
         #create output list for whole function, where line_output
         #will be added after each read of a line
         output = []
@@ -65,13 +69,49 @@ class Parser:
                     "Wrong type! at " + self.symbol.string +
                     " on line " + str(self.symbol.line_number) +
                     " and character " + str(self.symbol.start_char_number) +
-                    "\n expected: " + str(type_dict.get(phrase_type_list[i])) +
-                    " but got: " + str(type_dict.get(self.symbol.type))
+                    "\n expected: " + str(self.type_dict.get(phrase_type_list[i])) +
+                    " but got: " + str(self.type_dict.get(self.symbol.type))
                 )
-            elif (self.symbol.type in (6,7,8)):
-                #if symbol type is keyword, number or name
-                line_output.append(self.symbol.id)
-                i += 1
+            elif (self.symbol.type is 6):
+                #if symbol type is a keyword
+                if(expected_keyword_name_number_list[i] is None or self.symbol.id in expected_keyword_name_number_list[i]):
+                    line_output.append(self.symbol.id)
+                    i += 1
+                elif (expected_keyword_name_number_list[i] is not None):
+                    raise TypeError(
+                        "Wrong keyword! at " + self.symbol.string +
+                        " on line " + str(self.symbol.line_number) +
+                        " and character " + str(self.symbol.start_char_number) +
+                        "\n expected keywords with ids: " + str(expected_keyword_name_number_list[i]) +
+                        " but got id: " + str(self.symbol.id)
+                    )
+            elif (self.symbol.type is 7):
+                #if symbol type is a number
+                if(expected_keyword_name_number_list[i] is None or self.symbol.id in expected_keyword_name_number_list[i]):
+                    line_output.append(self.symbol.id)
+                    i += 1
+                elif (expected_keyword_name_number_list[i] is not None):
+                    raise TypeError(
+                        "Wrong number! at " + self.symbol.string +
+                        " on line " + str(self.symbol.line_number) +
+                        " and character " + str(self.symbol.start_char_number) +
+                        "\n expected numbers in the range: " + str(expected_keyword_name_number_list[i]) +
+                        " but got : " + str(self.symbol.string)
+                    )
+            elif (self.symbol.type is 8):
+                #if symbol type is a name
+                if(expected_keyword_name_number_list[i] is None or self.symbol.id in expected_keyword_name_number_list[i]):
+                    line_output.append(self.symbol.id)
+                    i += 1
+                elif (expected_keyword_name_number_list[i] is not None):
+                    raise TypeError(
+                        "Wrong name! at " + self.symbol.string +
+                        " on line " + str(self.symbol.line_number) +
+                        " and character " + str(self.symbol.start_char_number) +
+                        "\n expected names with id: " + str(expected_keyword_name_number_list[i]) +
+                        " but got id: " + str(self.symbol.id)
+                    )
+
             elif (i == length-1 and self.symbol.type == phrase_type_list[length - 1]):
                 output.append(line_output)
                 line_output = []

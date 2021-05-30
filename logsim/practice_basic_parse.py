@@ -46,7 +46,7 @@ def main():
                 break
         scan = Scanner(path, Names())
         parse = Parser(Names(), scan)
-        print(parse.phrase_detection((8,2,6,5),scan.EOF))
+        print(parse.phrase_detection((8,2,6,5),(None,None,range(2,10),None),scan.EOF))
 
 if __name__ == "__main__":
     main()
