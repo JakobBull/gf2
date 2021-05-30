@@ -111,7 +111,11 @@ class Scanner:
         self.current_char_number = 1
 
     def get_symbol(self):
-        """Translate the next sequence of characters into a symbol."""
+        """
+        Translates the next sequence of characters into a symbol.
+
+        RETURN: Symbol - the next symbol from input file of scanner instance
+        """
         symbol = Symbol()
         self.skip_spaces()  # current character now not whitespace
         symbol.line_number = self.current_line_number
@@ -162,8 +166,11 @@ class Scanner:
 
     def advance(self):
         # Need to advance once to get to fist character of file!
-        # advance: reads the next character from the definition file
-        # and places it in current_character
+        """advance: reads the next character from the definition file
+        and places it in current_character
+
+        RETURN: None
+        """
         char = self.file.read(1)
         self.current_character = char
         if(self.current_character == '\n'):
@@ -173,25 +180,26 @@ class Scanner:
             self.current_char_number += 1
 
     def skip_spaces(self):
-        # skip_spaces: calls advance as necessary until current_character
-        # is not whitespace
-        """Skip whitespace until a non-whitespace character is reached."""
-        # only skips to next non-whitespace character if current character is
-        # is a space. Then it will skip all whitespace between the current
-        # space until the next non whitespace character
+        """
+        Skips whitespace until a non-whitespace character is reached.
+        It calls advance until current_character is not whitespace.
+
+        Only skips to next non-whitespace character if current character is
+        is a space. Then it will skip all whitespace between the current
+        space until the next non whitespace character
+
+        RETURN: None
+        """
         while self.current_character.isspace():
             self.advance()
 
     def get_name(self):
-        """similar to get_next_name in the preliminary exercises,
-        except that it now assumes the current character is a letter,
-        returns only the name string and places the next non-alphanumeric
-        character in current_character """
+        """
+        Assuming current_character is a letter, returns the word of the
+        following name that begins with current_character. It then stores
+        the next non-alphanumeric character into current_character
 
-        """get_next_name:
-        Seek the next name string in input_file.
-        Return the name string (or None) and the
-        next non-alphanumeric character
+        RETURN: String - the current name
         """
         name = ""
         name += self.current_character
@@ -205,9 +213,15 @@ class Scanner:
         return name
 
     def get_number(self):
-        """assumes the current character is a digit,
-        returns the integernumber and places the next
-        non-digit character in current_character"""
+        """assumes the current_character is a digit, returns the number
+        that begins with current_character and places the next non-digit
+        character in current_character.
+
+        Note: get_number will return numbers that begin in 0.
+        ex, if the input file is "0900" it will return "0900" NOT "900"
+
+        Return: String - the current number
+        """
         # should number be able to start with a 0?
         integernumber = ""
         integernumber += self.current_character
