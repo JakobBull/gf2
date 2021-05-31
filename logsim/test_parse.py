@@ -14,31 +14,21 @@ def test_working_spec():
     parse.parse_network()
     assert True
 
-
-def test_headings_order():
-    scan = Scanner("parse_test_files/test_headings.txt", Names())
+@pytest.mark.parametrize(
+    "file, expected_string",
+    [
+        ("test_1", "Headings called in wrong order"),
+        ("test_2", "Always need to follow a heading with {"),
+        ("test_3", "Device: Name of device must contain a letter"),
+        ("test_4","Device: Name for device already used"),
+    ],
+)
+# tests if query returns correct name ID for a name sting
+def test_query_output(file, expected_string):
+    path = "parse_test_files/"
+    path += file
+    path += ".txt"
+    scan = Scanner(path, Names())
     parse = Parser(Names(), scan)
-    with pytest.raises(SyntaxError, match= "Headings called in wrong order"):
+    with pytest.raises(SyntaxError, match= expected_string):
         parse.parse_network()
- 
-def test_OPENCURLY():
-    scan = Scanner("parse_test_files/test_OPENCURLY.txt", Names())
-    parse = Parser(Names(), scan)
-    with pytest.raises(SyntaxError, match="Always need to follow a heading with {"):
-        parse.parse_network()
-
-def test_device_NAME():
-    scan = Scanner("parse_test_files/test_device_NAME.txt", Names())
-    parse = Parser(Names(), scan)
-    with pytest.raises(SyntaxError, match= "Device: Name of device must contain a letter"):
-        parse.parse_network()
-
-def test_reused_name():
-    scan = Scanner("parse_test_files/test_reused_NAME.txt", Names())
-    parse = Parser(Names(), scan)
-    with pytest.raises(SyntaxError, match="Device: Name for device already used"):
-        parse.parse_network()
-
-
-
-
