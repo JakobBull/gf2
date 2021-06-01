@@ -2,6 +2,7 @@ from scanner import Symbol
 from scanner import Scanner
 from names import Names
 from parse import Parser
+from error import Error
 
 
 import pytest
@@ -17,10 +18,10 @@ def test_working_spec():
 @pytest.mark.parametrize(
     "file, expected_string",
     [
-        ("test_1", "Headings called in wrong order"),
-        ("test_2", "Always need to follow a heading with {"),
-        ("test_3", "Device: Name of device must contain a letter"),
-        ("test_4","Device: Name for device already used"),
+        ("test_1", Error.error_message[0]),
+        ("test_2", Error.error_message[1]),
+        ("test_3", Error.error_message[2]),
+        ("test_4", Error.error_message[3]),
     ],
 )
 # tests if query returns correct name ID for a name sting
