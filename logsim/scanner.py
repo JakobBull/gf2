@@ -10,7 +10,6 @@ Symbol - encapsulates a symbol and stores its properties.
 """
 import sys
 import os
-from userint import UserInterface
 
 
 class Symbol:
@@ -58,6 +57,7 @@ class Scanner:
     """
     def __init__(self, path, names):
         """"Open specified file and initialise reserved words and IDs."""
+        self.path = path
         # opens specified file
         try:
             """Open and return the file specified by path for reading"""
@@ -109,6 +109,7 @@ class Scanner:
         # initialise line number and character number counters
         self.current_line_number = 1
         self.current_char_number = 1
+        if char == '\n':  self.current_line_number += 1
 
     def get_symbol(self):
         """
@@ -118,6 +119,8 @@ class Scanner:
         """
         symbol = Symbol()
         self.skip_spaces()  # current character now not whitespace
+        self.skip_comments()
+        self.skip_unused()
         symbol.line_number = self.current_line_number
         symbol.start_char_number = self.current_char_number
         symbol.end_char_number = self.current_char_number
@@ -191,6 +194,31 @@ class Scanner:
         RETURN: None
         """
         while self.current_character.isspace():
+            self.advance()
+
+
+    def skip_comments(self):
+        if self.current_character == "/":      #comment
+            self.advance()
+            if self.current_character == "/":   #single line comment
+                while True:
+                    self.advance()
+                    if self.current_character == "\n":
+                        break
+            elif self.current_character == "*":
+                while True:
+                    self.advance()
+                    if self.current_character == "*":
+                        self.advance()
+                        if self.current_character == "/":
+                            break
+    def skip_unused(self):
+        used = ('{','}','=','.','-',';','')
+        while True:
+            if self.current_character.isalnum():
+                break
+            if self.current_character in used:
+                break
             self.advance()
 
     def get_name(self):
