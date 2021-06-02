@@ -11,17 +11,6 @@ import pytest
 import sys
 import os
 
-def test_working_spec():
-    names = Names()
-    devices = Devices(names)
-    network = Network(names, devices)
-    monitors = Monitors(names, devices, network)
-    path = "parse_test_files/test_working_spec.txt"
-    scanner = Scanner(path, names)
-    parser = Parser(names, devices, network, monitors, scanner)
-    parser.parse_network()
-    assert True
-
 @pytest.mark.parametrize(
     "file, expected_errors",
     # expected_errors, list of list of properties for each error that should occur
@@ -31,8 +20,48 @@ def test_working_spec():
     # atom/vs code for writing tests. Usually at the bottom in the form:
     # line# : char#
     [
-        ("test_1", [[0,"CONNECTIONS",1,1],[3,"-",3,9]])
-    ],
+        ("no_errors", []),
+        (
+            "test_1",
+            [
+                [0,"CONNECTIONS",3,1],
+                [1,"SW1",5,5],
+                [2,"912",6,5],
+                [3,"SW1",7,5],
+                [4,"-",8,8],
+                [13,"1",11,14],
+                [12,";",12,15],
+                [11,"G2.I1",13,8],
+                [10,"G22",14,5],
+                [18,"SW19",17,5],
+                [19,"0",18,9],
+                [27,"W2",22,5],
+                [24,"W2",22,5]
+            ]
+        ),
+        (
+            "test_2",
+            [
+                [5,";",5,11],
+                [7,"0",7,22],
+                [6,"2",8,15],
+                [14,"SW1",12,5],
+                [20,"222",17,11],
+                [22, "}",19,3],
+                [26,"G1",22,5]
+            ]
+        ),
+        (
+            "test_3",
+            [
+                [8,"2",8,18],
+                [9,"0",9,29],
+                [16,";",12,14],
+                [17,"I2",13,14],
+                [23,"}",20,3]
+            ]
+        )
+    ]
 )
 # tests if query returns correct name ID for a name sting
 def test_error_detection(file, expected_errors):
