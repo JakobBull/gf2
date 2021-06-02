@@ -1,3 +1,0 @@
-DEVICES 123 hello = XOR bye;
-CONNECTIONS NETWORK
-hello bye
