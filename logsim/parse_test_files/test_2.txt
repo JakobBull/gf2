@@ -1,0 +1,24 @@
+//each error is a list of error_type, symbol_string_that_caused_error, line_number, start_char_number
+//errors defined in google doc
+NETWORK{
+  DEVICES{}
+    SW1 = ;             //[5,";",5,11]
+    SW2 = SWITCH;
+    G1 = NAND inputs 0; //[7,"0",7,22]
+    G2 = NAND 2;        //[6,"2",8,15]
+  }
+  CONNECTIONS{
+    SW1 - G1.I1;
+    SW1 - G2.I2;  //[14,"SW1",12,5] is this what you were thinking @Charlie?
+    G1 - G2.I1;
+    G2 - G1.I2;
+  }
+  SIGNALS{
+    SW1 = 222;    //[20,"222",17,11]
+    SW2 = 0       //[22, "}",19,3]
+  }
+  MONITOR{
+    G1;
+    G1;   //[26,"G1",22,5]
+  }
+}

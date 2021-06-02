@@ -1,0 +1,24 @@
+//each error is a list of error_type, symbol_string_that_caused_error, line_number, start_char_number
+//errors defined in google doc
+CONNECTIONS{      // [0,"CONNECTIONS",3,1]  (error type 0)
+  DEVICES         // [1,"SW1",5,5]
+    SW1 = SWITCH;
+    912 = SWITCH;          // [2,"912",6,5]
+    SW1 = NAND inputs 2;   // [3,"SW1",7,5]
+    G2 - NAND inputs 2;    // [4,"-",8,8]
+  }
+  CONNECTIONS{
+    SW1 - G1.1;   // [13,"1",11,14]
+    SW2 - G2I2;   // [12,";",12,15]
+    G1 G2.I1;     // [11,"G2.I1",13,8]
+    G22 - G1.I2;  // [10,"G22",14,5]
+  }
+  SIGNALS{
+    SW19 = 0;     // [18,"SW19",17,5]
+    SW2 0;        // [19,"0",18,9]
+  }
+  MONITOR{
+    G1    // [27,"W2",22,5]
+    W2;   // [24,"W2",22,5]
+  }
+}
