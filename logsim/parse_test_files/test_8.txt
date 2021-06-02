@@ -8,7 +8,7 @@ NETWORK{
   CONNECTIONS{
     SW1 - G1.I1;
     SW2 - G2.I2;
-    G1  G2.I1;	// [11,"G2.I1",13,8]
+    G1  G2.I1;	// [11,"G2.I1",11,8]
     G2 - G1.I2;
   }
   SIGNALS{

@@ -12,7 +12,7 @@ NETWORK{
     G2 - G1.I2;
   }
   SIGNALS{
-    SW19 = 0;	// [18,"SW19",17,5]
+    SW19 = 0;	// [18,"SW19",15,5]
     SW2 = 0;
   }
   MONITOR{

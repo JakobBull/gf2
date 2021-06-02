@@ -6,7 +6,7 @@ NETWORK{
     G2 = NAND inputs 2;
   }
   CONNECTIONS{
-    SW1 - G1.1;		// [13,"1",11,14]
+    SW1 - G1.1;		// [13,"1",9,14]
     SW2 - G2.I2;
     G1 - G2.I1;
     G2 - G1.I2;

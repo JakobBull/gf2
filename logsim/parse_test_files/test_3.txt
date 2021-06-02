@@ -1,7 +1,7 @@
 NETWORK{
   DEVICES{
     SW1 = SWITCH;
-    912 = SWITCH;	// [2,"912",6,5]
+    912 = SWITCH;	// [2,"912",4,5]
     G1 = NAND inputs 2;
     G2 = NAND inputs 2;
   }
