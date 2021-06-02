@@ -1,0 +1,21 @@
+//each error is a list of error_type, symbol_string_that_caused_error, line_number, start_char_number
+//errors defined in google doc
+NETWORK{
+  DEVICES{}
+    SW1 = SWITCH;
+    SW2 = SWITCH;
+    G1 = DTYPE;
+    CLK1 = CLOCK 2;   //[8,"2",8,18]
+    CLK2 = CLOCK halfperiod 0;  //[9,"0",9,29]
+  }
+  CONNECTIONS{
+    SW1 - G1Q;    //[16,";",12,14]
+    SW2 - G1.I2;  //[17,"I2",13,14]
+  }
+  SIGNALS{
+    SW1 = 0;
+    SW2 = 0;
+  }
+  MONITOR{
+  }   //[23,"}",20,3]
+}

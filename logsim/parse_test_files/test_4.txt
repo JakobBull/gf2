@@ -1,8 +1,8 @@
-CONNECTIONS{      // [0,"CONNECTIONS",3,1]  (error type 0)
+NETWORK{
   DEVICES{
     SW1 = SWITCH;
     SW2 = SWITCH;
-    G1 = NAND inputs 2;
+    SW1 = NAND inputs 2;	//// [3,"SW1",7,5]
     G2 = NAND inputs 2;
   }
   CONNECTIONS{
@@ -17,6 +17,6 @@ CONNECTIONS{      // [0,"CONNECTIONS",3,1]  (error type 0)
   }
   MONITOR{
     G1;
-    W2;
+    G2;
   }
 }

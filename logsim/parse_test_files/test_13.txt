@@ -1,4 +1,4 @@
-CONNECTIONS{      // [0,"CONNECTIONS",3,1]  (error type 0)
+NETWORK{
   DEVICES{
     SW1 = SWITCH;
     SW2 = SWITCH;
@@ -17,6 +17,6 @@ CONNECTIONS{      // [0,"CONNECTIONS",3,1]  (error type 0)
   }
   MONITOR{
     G1;
-    W2;
+    W2;		// [24,"W2",22,5]
   }
 }
