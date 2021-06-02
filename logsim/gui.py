@@ -250,12 +250,12 @@ class SidePanel(wx.Panel):
 
     def __init__(self, parent, scrolled_panel)-> None:
         super().__init__(parent=parent)
-        
+
         self.parent = parent
         self.scrolled_panel = scrolled_panel
 
         # Configure the widgets
-        
+
         #control setting number of cycles
         self.text = wx.StaticText(self, wx.ID_ANY, "Cycles")
         self.spin = wx.SpinCtrl(self, wx.ID_ANY, "10")
@@ -263,7 +263,7 @@ class SidePanel(wx.Panel):
         #run and continue buttons
         self.run_button = wx.Button(self, wx.ID_ANY, "Run")
         self.continue_button = wx.Button(self, wx.ID_ANY, "Continue")
-        
+
         """Setting the value of a signal/ switch
         switch_box takes the value
         zero_button and one_button allow toggling between 0 and 1
@@ -275,13 +275,13 @@ class SidePanel(wx.Panel):
         self.one_button = wx.RadioButton(self, -1, "1")
         self.add_switch_button = wx.Button(self, -1, "Add")
 
-        
+
         self.monitor_text = wx.StaticText(self, wx.ID_ANY, "Set outputs to monitor")
         #monitor_sizer
         self.monitor_combobox = wx.ComboBox(self, wx.ID_ANY, "Select", choices = [self.parent.names.get_name_string(i) for i in self.parent.devices.find_devices(None)])
         self.add_monitor_button = wx.Button(self, wx.ID_ANY, "Add")
 
-        
+
         self.remove_monitor_text = wx.StaticText(self, wx.ID_ANY, "Remove monitor")
         #remove_monitor_sizer
         self.remove_monitor_combobox = wx.ComboBox(self, wx.ID_ANY, "Select", choices = [item.name for item in self.scrolled_panel.item_list])
@@ -331,7 +331,7 @@ class SidePanel(wx.Panel):
         self.side_sizer.Add(self.remove_monitor_sizer, 1, wx.ALL|wx.EXPAND, 0)
 
         self.cycle_sizer.Add(self.text, 1, wx.ALL | wx.ALIGN_CENTER, 5)
-        self.cycle_sizer.Add(self.spin, 2, wx.ALL | wx.ALIGN_RIGHT, 5)
+        self.cycle_sizer.Add(self.spin, 2, wx.ALL, 5)
 
         self.button_sizer.Add(self.run_button, 1, wx.ALL | wx.EXPAND, 5)
         self.button_sizer.Add(self.continue_button, 1, wx.ALL | wx.EXPAND, 5)
@@ -387,7 +387,7 @@ class SidePanel(wx.Panel):
             port_id = None
         return [device_id, port_id]
 
-    
+
     def on_add_monitor(self, event):
         """Handle the event when the add monitor button is pressed"""
         monitor = self.monitor_combobox.GetValue()
@@ -473,7 +473,7 @@ class SidePanel(wx.Panel):
             self.devices.cold_startup()
             if self.run_network(cycles):
                 self.cycles_completed += cycles
-    
+
     def on_continue_button(self, event):
         """Handle the event triggered by pressing the continue button"""
         cycles = self.spin.GetValue()
@@ -576,7 +576,7 @@ class MonitorItem(wx.Panel):
         self.remove_item.Bind(wx.EVT_BUTTON, self.on_remove_item)
 
         self.sizer = wx.BoxSizer(wx.HORIZONTAL)
-        
+
         self.sizer.Add(self.name_text, 0,wx.ALIGN_CENTER, 0)
         self.sizer.Add(self.canvas, -1 , wx.EXPAND, 0)
         self.sizer.Add(self.remove_item, 0, wx.ALIGN_CENTER , 0)
@@ -632,9 +632,9 @@ class FilePanel(wx.Panel):
         self.currentDirectory = os.getcwd()
         dlg = wx.FileDialog(
             self, message="Choose a file",
-            defaultDir=self.currentDirectory, 
+            defaultDir=self.currentDirectory,
             defaultFile="",
-            style=wx.FD_OPEN | wx.FD_MULTIPLE | wx.FD_CHANGE_DIR
+            style=wx.FD_OPEN | wx.FD_CHANGE_DIR
             )
         if dlg.ShowModal() == wx.ID_OK:
             path = dlg.GetPath()
@@ -695,7 +695,7 @@ class Gui(wx.Frame):
     def __init__(self, parent, title, names, devices, network, monitors):
         """Initialise widgets and layout."""
         super().__init__(parent=None, title=title, size=(800, 600))
-        
+
         self.parent = parent
         self.Bind(wx.EVT_CLOSE, self.closeWindow)
         #self.path = path
@@ -755,7 +755,7 @@ class FrameManager:
         self.menu.Show()
         self.gui.Hide()
         self.app.MainLoop()
-    
+
     def show_gui(self, path):
         if path != None:
             self.menu.Hide()
