@@ -1,18 +1,25 @@
+from names import Names
+from devices import Devices
+from network import Network
+from monitors import Monitors
+from parse import Parser
 from scanner import Symbol
 from scanner import Scanner
-from names import Names
-from parse import Parser
 from error import Error
-
 
 import pytest
 import sys
 import os
 
 def test_working_spec():
-    scan = Scanner("parse_test_files/test_working_spec.txt", Names())
-    parse = Parser(Names(), scan)
-    parse.parse_network()
+    names = Names()
+    devices = Devices(names)
+    network = Network(names, devices)
+    monitors = Monitors(names, devices, network)
+    path = "parse_test_files/test_working_spec.txt"
+    scanner = Scanner(path, names)
+    parser = Parser(names, devices, network, monitors, scanner)
+    parser.parse_network()
     assert True
 
 @pytest.mark.parametrize(
@@ -32,13 +39,25 @@ def test_error_detection(file, expected_errors):
     path = "parse_test_files/"
     path += file
     path += ".txt"
-    scan = Scanner(path, Names())
-    parse = Parser(Names(), scan)
-    parse.parse_network()
+
+    names = Names()
+    devices = Devices(names)
+    network = Network(names, devices)
+    monitors = Monitors(names, devices, network)
+
+    scanner = Scanner(path, names)
+    parser = Parser(names, devices, network, monitors, scanner)
+    parser.parse_network()
+    # print(len(Error.types))
     for i in range(len(expected_errors)):
         error = expected_errors[i] # the list for the ith error from expected_errors
         # make sure error types stored in error class align with those expected
         # by expected_errors
+        # print("1:", end="\t")
+        # print(Error.types[i], end="\t")
+        # print(Error.symbols[i].string, end="\t")
+        # print(Error.symbols[i].line_number, end="\t")
+        # print(Error.symbols[i].start_char_number)
         assert(Error.types[i] == error[0])
         assert(Error.symbols[i].string == error[1])
         assert(Error.symbols[i].line_number == error[2])
