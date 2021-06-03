@@ -1,0 +1,41 @@
+NETWORK{
+    DEVICES{
+        clock = CLOCK halfperiod 1;
+        dtype = DTYPE;
+        and = AND inputs 1;
+        nand = NAND inputs 1;
+        or = OR inputs 1;
+        nor = NOR inputs 1;
+        xor = XOR;
+        switch = SWITCH;
+    }
+    
+    CONNECTIONS{
+        clock - and.I1;
+        switch - nand.I1;
+        and - or.I1;
+        nand - nor.I1;
+        switch - dtype.DATA;
+        clock - dtype.CLK;
+        or - dtype.SET;
+        nor - dtype.CLEAR;
+        dtype.Q - xor.I1;
+        dtype.QBAR - xor.I2;
+    }
+    SIGNALS{
+        switch = 1;
+    }
+    MONITOR{
+        clock;
+        dtype.Q;
+        and;
+        nand;
+        or;
+        nor;
+        xor;
+    }
+    
+}  
+  
+
+    

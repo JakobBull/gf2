@@ -1,0 +1,33 @@
+NETWORK{
+    DEVICES{
+        x1 = XOR;
+        x2 = XOR;
+        a1 = AND inputs 2;
+        a2 = AND inputs 2;
+        SW1 = SWITCH;
+        SW2 = SWITCH;
+        o1 = OR inputs 2;
+        clock = CLOCK halfperiod 1;
+    }
+    CONNECTIONS{
+        SW1 - x1.I1;
+        SW2 - x1.I2;
+        x1 - x2.I1;
+        clock - x2.I2;
+        x1 - a1.I1;
+        clock - a1.I2;
+        SW1 - a2.I1;
+        SW2 - a2.I2;
+        a1 - o1.I1;
+        a2 - o1.I2;
+    }
+    SIGNALS{
+        SW1 = 1;
+        SW2 = 1;
+    }
+    MONITOR{
+        clock;
+        x2;
+        o1;
+    }
+}

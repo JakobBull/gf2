@@ -95,6 +95,11 @@ class Parser:
 
             # Call for the next symbol from scanner
             self.symbol = self.scanner.get_symbol()
+            if self.parse_errors != 0:
+                Error.print_error(self.scanner)
+                return False
+
+
             if self.symbol.type == self.scanner.KEYWORD:
                 # Check if symbol is a Heading
                 print('Keyword')

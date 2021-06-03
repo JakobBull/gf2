@@ -1,0 +1,40 @@
+NETWORK{
+    DEVICES{
+        dtype = DTYPE;
+        a1 = AND inputs 2;
+        a2 = AND inputs 2;
+        o1 = OR inputs 2;
+        n1 = NAND inputs 1;
+        sw = SWITCH;
+        clock = CLOCK halfperiod 3;
+        set = SWITCH;
+        clear = SWITCH;
+    }
+    CONNECTIONS{
+        clock - dtype.CLK;
+        set - dtype.SET;
+        sw - n1.I1;
+        n1 - a1.I1;
+        dtype.Q - a1.I2;
+        sw - a2.I1;
+        dtype.QBAR - a2.I2;
+        a1 - o1.I1;
+        a2 - o1.I2;
+        o1 - dtype.DATA;
+        clear - dtype.CLEAR;
+    }
+    SIGNALS{
+        sw = 1;
+        set = 0;
+        clear = 0;
+    }
+    MONITOR{
+        dtype.Q;
+        clock;
+        sw;
+        set;
+        clear;
+
+    }
+
+}
