@@ -202,9 +202,10 @@ class Parser:
             self.parse_errors += 1
             Error(3, self.symbol)
             self.advance_line_error()
-            # add symbol id to a list of device ids
+
         else:
             self.device_names.append(self.symbol.id)
+            # add symbol id to a list of device ids
             self.new_device_id = self.symbol.id
             print(self.symbol.string)
             self.symbol = self.scanner.get_symbol()
@@ -225,7 +226,7 @@ class Parser:
 
                 else:
                     self.new_device_type = self.symbol.id
-
+                    # Check whether inputs required
                     if (self.symbol.id == self.scanner.XOR_ID or
                             self.symbol.id == self.scanner.DTYPE_ID):
                         self.devices.make_device(
@@ -233,7 +234,7 @@ class Parser:
 
                     elif self.symbol.id == self.scanner.SWITCH_ID:
                         print('switch found')
-                        # self.symbol = self.scanner.get_symbol()
+                        # Set switches to 0, can change later
                         self.devices.make_switch(self.new_device_id, 0)
 
                     elif self.symbol.id in self.gate_var_inputs_IDs:
@@ -241,6 +242,7 @@ class Parser:
                         print("symbol string", self.symbol.string)
                         print("symbol id: ", self.symbol.id)
                         print("symbol type:", self.symbol.type)
+                        # Next symbol should be "inputs"
                         self.symbol = self.scanner.get_symbol()
                         if self.symbol.string != "inputs":
                             self.parse_errors += 1
@@ -256,6 +258,7 @@ class Parser:
 
                             if (self.symbol.number < 1 or
                                     self.symbol.number > 16):
+                                # Check number of inputs in range
                                 self.parse_errors += 1
                                 Error(7, self.symbol)
                                 self.advance_line_error()
@@ -264,8 +267,10 @@ class Parser:
                                 self.devices.make_gate(
                                     self.new_device_id, self.new_device_type,
                                     self.symbol.number)
+                                # Make the gate
 
                     elif self.symbol.id == self.scanner.CLOCK_ID:
+                        # Next symbol should be "halfperiod"
                         self.symbol = self.scanner.get_symbol()
                         if self.symbol.string != "halfperiod":
                             self.parse_errors += 1
@@ -273,6 +278,7 @@ class Parser:
                             self.advance_line_error()
 
                         else:
+                            # Next symbol should be a number
                             self.symbol = self.scanner.get_symbol()
                             if self.symbol.type != self.scanner.NUMBER:
                                 self.parse_errors += 1
@@ -308,6 +314,7 @@ class Parser:
     def connection_parse(self):
         """Parse a single connection."""
         # Expected format : name DASH name PERIOD Inumber
+        # For DTYPE format: name DASH name PERIOD DTYPE_INPUT
 
         if self.symbol.id not in self.device_names:
             #  print("Not defined:", self.symbol.string)
@@ -524,6 +531,7 @@ class Parser:
 
     def advance_line_error(self):
         """Advances to the next ; xafter an error to continue parsing."""
+        # FEATURE REMOVED AS IT CAUSED INFINITE LOOPS
         # while (self.symbol.type != self.scanner.SEMICOLON or
         #        self.symbol.type != self.scanner.RIGHT_BRACKET):
         #    self.symbol = self.scanner.get_symbol()
