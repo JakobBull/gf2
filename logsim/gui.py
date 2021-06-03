@@ -552,6 +552,8 @@ class Monitor(scrolled.ScrolledPanel):
 
     def add_monitor(self, text):
         """Adds a MonitorItem with name text."""
+        [child_device_id, child_output_id] = self.devices.get_signal_ids(text)
+        self.monitors.make_monitor(child_device_id, child_output_id)
         self.item_list.append(
             MonitorItem(
                 self,
@@ -567,6 +569,8 @@ class Monitor(scrolled.ScrolledPanel):
 
     def remove_monitor(self, text):
         """Removes a MonitorItems with name text."""
+        [child_device_id, child_output_id] = self.devices.get_signal_ids(text)
+        self.monitors.remove_monitor(child_device_id, child_output_id)
         self.item_list = [item for item in self.item_list if item.name != text]
         for item in self.sizer.GetChildren():
             widget = item.GetWindow()
@@ -699,10 +703,16 @@ class FilePanel(wx.Panel):
     
     Public Methods:
 
-    on_open_file(self, event): Handles the event when the open file button is pressed, calls FrameManagers
+    on_open_file(self, event): Handles the event when the open file button is pressed, 
+                                opens FileDialog.
+    on_gui_button(self, event): Handles the event when the enter GUI button is pressed,
+                                calls FrameManagers show_gui method.
+    on_save_file(self, event): Handles the event when the save file button is pressed, 
+                                calls FrameManagers save_file method.
 
     """
     def __init__(self, parent) -> None:
+        """Initialises FilePanel and widgets."""
         super().__init__(parent=parent)
         self.parent = parent
         self.path = None
@@ -723,6 +733,7 @@ class FilePanel(wx.Panel):
         self.SetSizer(main_sizer)
 
     def on_open_file(self, event):
+        """Opens FileDialog, lets user select file and loads in text from file."""
         self.currentDirectory = os.getcwd()
         dlg = wx.FileDialog(
             self, message="Choose a file",
@@ -751,13 +762,23 @@ class FilePanel(wx.Panel):
             self.path = path
 
     def on_gui_button(self, event):
+        """Attemps to go to gui, calls parser."""
         self.parent.parent.show_gui(self.path)
 
     def on_save_file(self, event):
+        """Opens save menu."""
         self.parent.parent.save_file(self)
 
 
 class TextEditor(wx.Panel):
+    """
+    Text Editor Panel that stores file text and allows users to edit said text before parsing.
+
+    Parameters:
+
+    Public Methods:
+
+    """
     def __init__(self, parent) -> None:
         super().__init__(parent=parent)
         self.file = None
