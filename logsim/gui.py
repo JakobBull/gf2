@@ -654,6 +654,7 @@ class MonitorItem(wx.Panel):
         self.parent.remove_child(self)
 
     def render(self):
+        print(self.devices.get_device(self.device_id).device_kind)
         if self.devices.get_device(self.device_id).device_kind == self.devices.D_TYPE:
             self.values = self.parent.monitors.monitors_dictionary[self.device_id, None]
             self.canvas_panel.canvas.render_value(self.values)
