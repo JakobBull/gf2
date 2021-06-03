@@ -1,0 +1,34 @@
+//yo yo
+// charlie made a cool Parser
+
+/*jakob
+made a
+pretty
+nice gui
+*/
+
+NETWORK{
+    DEVICES{
+	SW1 = SWITCH;
+	SW2 = SWITCH;  //but
+	G1 = NAND;
+	G2 = NAND;
+	}  //hopefully
+   CONNECTIONS{
+	SW1 - G1.I1;
+	SW2 - G2.I2; //these
+	G1 - G2.I1;
+	G2 - G1.I2;
+	}
+   SIGNALS{
+	SETSIGNAL{
+		SW1 = 0 starttime 0;    //comments can work
+		SW2 = 0 starttime 0;
+		}
+	SETCLOCK{}
+	}
+   MONITOR{
+	G1;
+	G2;
+	}
+}
