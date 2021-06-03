@@ -139,6 +139,9 @@ def test_scanner_example_file():
         print(i, end="\t")
         print(correct_type_list[i], end="\t")
         print(symbol.type)
+        if(i == 10):
+            assert(symbol.line_number == 4)
+            assert(symbol.start_char_number == 8)
         i += 1
         if(symbol.type == scan.EOF):
             break
@@ -147,11 +150,15 @@ def test_scanner_example_file_with_comments():
     scan = Scanner("scanner_test_files/example_1_with_comments.txt", Names())
     i = 0
     while True:
+
         symbol = scan.get_symbol()
         assert(symbol.type == correct_type_list[i])
         print(i, end="\t")
         print(correct_type_list[i], end="\t")
         print(symbol.type)
+        if(i == 10):
+            assert(symbol.line_number == 13)
+            assert(symbol.start_char_number == 8)
         i += 1
         if(symbol.type == scan.EOF):
             break
