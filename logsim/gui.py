@@ -656,7 +656,7 @@ class MonitorItem(wx.Panel):
     def render(self):
         print(self.devices.get_device(self.device_id).device_kind)
         if self.devices.get_device(self.device_id).device_kind == self.devices.D_TYPE:
-            self.values = self.parent.monitors.monitors_dictionary[self.device_id, None]
+            self.values = self.parent.monitors.monitors_dictionary[self.device_id, self.devices.dtype_output_ids[0]]
             self.canvas_panel.canvas.render_value(self.values)
         else:
             self.values = self.parent.monitors.monitors_dictionary[self.device_id, self.output_id]
@@ -691,6 +691,17 @@ class MenuFrame(wx.Frame):
 
 
 class FilePanel(wx.Panel):
+    """Control Panel that has control buttons in the MenuFrame.
+    
+    Parameters:
+
+    parent: Instance of the MenuFrame frame.
+    
+    Public Methods:
+
+    on_open_file(self, event): Handles the event when the open file button is pressed, calls FrameManagers
+
+    """
     def __init__(self, parent) -> None:
         super().__init__(parent=parent)
         self.parent = parent
