@@ -41,7 +41,6 @@ class Parser:
         self.network = network
         self.monitors = monitors
         self.scanner = scanner
-        #self.Error = Error
 
         self.type = None
         self.id = None
@@ -98,7 +97,6 @@ class Parser:
             if self.parse_errors != 0:
                 Error.print_error(self.scanner)
                 return False
-
 
             if self.symbol.type == self.scanner.KEYWORD:
                 # Check if symbol is a Heading
@@ -205,7 +203,7 @@ class Parser:
             Error(3, self.symbol)
             self.advance_line_error()
             # add symbol id to a list of device ids
-        else:    
+        else:
             self.device_names.append(self.symbol.id)
             self.new_device_id = self.symbol.id
             print(self.symbol.string)
@@ -500,7 +498,7 @@ class Parser:
             self.parse_errors += 1
             Error(24, self.symbol)
             self.advance_line_error()
-        
+
         else:
 
             [device_id, output_id] = self.signame_in()
@@ -525,10 +523,9 @@ class Parser:
                 self.advance_line_error()
 
     def advance_line_error(self):
-        """Advances to the next ; xafter an error to continue parsing.
-        while (self.symbol.type != self.scanner.SEMICOLON or
-                self.symbol.type != self.scanner.RIGHT_BRACKET):
-            self.symbol = self.scanner.get_symbol()
-            # if self.symbol.id in self.heading_IDs:
-            """
+        """Advances to the next ; xafter an error to continue parsing."""
+        # while (self.symbol.type != self.scanner.SEMICOLON or
+        #        self.symbol.type != self.scanner.RIGHT_BRACKET):
+        #    self.symbol = self.scanner.get_symbol()
+        #  if self.symbol.id in self.heading_IDs:
         pass
