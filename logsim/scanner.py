@@ -59,6 +59,7 @@ class Scanner:
     def __init__(self, path, names):
         """"Open specified file and initialise reserved words and IDs."""
         self.path = path
+        self.comment_num = 0
         # opens specified file
         try:
             """Open and return the file specified by path for reading"""
@@ -179,6 +180,8 @@ class Scanner:
         """
         char = self.file.read(1)
         self.current_character = char
+        if(self.current_character == "#"):
+            self.comment_num += 1
         if(self.current_character == '\n'):
             self.current_line_number += 1
             self.current_char_number = 0
@@ -201,20 +204,8 @@ class Scanner:
 
 
     def skip_comments(self):
-        if self.current_character == "/":      #comment
+        while self.comment_num%2 == 0:
             self.advance()
-            if self.current_character == "/":   #single line comment
-                while True:
-                    self.advance()
-                    if self.current_character == "\n":
-                        break
-            elif self.current_character == "*":
-                while True:
-                    self.advance()
-                    if self.current_character == "*":
-                        self.advance()
-                        if self.current_character == "/":
-                            break
     def skip_unused(self):
         used = ('{','}','=','.','-',';','')
         while True:
