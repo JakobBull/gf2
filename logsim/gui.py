@@ -498,14 +498,14 @@ class SidePanel(wx.Panel):
         self.canvas.render("selected")
 
 
-class Monitor(scrolled.ScrolledPanel):
+class MonitorPanel(scrolled.ScrolledPanel):
     """
     Scrolled Panel that contains all the monitor traces
 
     Paramaters:
 
     parent: Gui passes an instance of itself.
-    monitors: Instance of the Monitor class.
+    monitors: Instance of the Monitors class.
     devices: Instance of the Devices class.
     names: Instance of the Names class.
 
@@ -605,7 +605,16 @@ class Canvaspanel(scrolled.ScrolledPanel):
     """
     Creates a MyGLCanvas object for each MonitorItem to draw signal trace on.
 
-    Paramaters
+    Paramaters:
+
+    parent: MonitorItem passes itself.
+    monitors: Monitors object.
+    devices: Devices object.
+
+    Public Methods:
+
+    None
+
     """
     def __init__(self, parent, monitors, devices) -> None:
         scrolled.ScrolledPanel.__init__(self, parent, -1)
@@ -622,8 +631,26 @@ class Canvaspanel(scrolled.ScrolledPanel):
 
 
 class MonitorItem(wx.Panel):
+    """A single Panel that displays a monitor trace. Child of MonitorPanel.
+    
+    Paramaters:
+
+    parent: MonitorPanel object.
+    name: Name of the output to be monitored.
+    monitors: Monitors object.
+    devices: Devices object.
+    names: Names object.
+
+    Public Methods:
+
+    on_remove_item(self, event): Event handler, handles when Remove is pressed,
+                                destroys self.
+    render(self): Calls the render_value method of the Canvaspanel object,
+                    added to this widget, draws signal trace.
+    """
 
     def __init__(self, parent, name, monitors, devices, names) -> None:
+        """Initialises widget. Creates a canvas object and all buttons."""
         super().__init__(parent=parent)
         self.parent = parent
         self.name = name
@@ -631,6 +658,7 @@ class MonitorItem(wx.Panel):
         self.monitors = monitors
         self.devices = devices
         self.canvas_panel = Canvaspanel(self, self.monitors, self.devices)
+        self.render()
 
         [self.device_id, self.output_id] = self.devices.get_signal_ids(
             self.name)
@@ -649,6 +677,7 @@ class MonitorItem(wx.Panel):
         self.SetSizer(self.sizer)
 
     def on_remove_item(self, event):
+        """Event handler, destroys self widget."""
         self.parent.item_list = [
             item for item in self.parent.item_list if item.name != self.name]
         self.parent.parent.side_panel.remove_monitor_combobox.Clear()
@@ -668,7 +697,19 @@ class MonitorItem(wx.Panel):
 
 
 class MenuFrame(wx.Frame):
+    """Main frame that opens when application is started. Allows loading and saving of files, 
+    allows editing of text and debugging features. Has a button to enter GUI.
+    
+    Parameters:
+
+    parent: FrameManager object.
+    
+    Public Methods:
+
+    closeWindow(self, event): Closes all frames, calls sys.exit.
+    """
     def __init__(self, parent) -> None:
+        """Sets up frame. Instantiates all objects."""
         super().__init__(parent=None)
         self.parent = parent
 
@@ -691,6 +732,7 @@ class MenuFrame(wx.Frame):
         self.SetSizer(main_sizer)
 
     def closeWindow(self, event):
+        """Closes all frames."""
         sys.exit()
 
 
@@ -776,10 +818,15 @@ class TextEditor(wx.Panel):
 
     Parameters:
 
+    parent: MenuFrame object.
+
     Public Methods:
+
+    set_text(self, path): Sets text.
 
     """
     def __init__(self, parent) -> None:
+        """Creates text control widget."""
         super().__init__(parent=parent)
         self.file = None
         main_sizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -788,6 +835,7 @@ class TextEditor(wx.Panel):
         self.SetSizer(main_sizer)
 
     def set_text(self, path):
+        """Sets text."""
         try:
             """Open and return the file specified by path for reading"""
             with open(path) as f:
@@ -888,7 +936,7 @@ class Gui(wx.Frame):
         self.cursor = 0  # cursor position
 
         # Canvas for drawing signals
-        self.scrolled_panel = Monitor(
+        self.scrolled_panel = MonitorPanel(
             self, self.monitors, self.devices, self.names)
         self.scrolled_panel.SetupScrolling()
         # Control side_panel
