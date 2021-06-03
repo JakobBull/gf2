@@ -174,6 +174,7 @@ class Parser:
         self.OPENCURLY_search()
 
         self.symbol = self.scanner.get_symbol()
+        # Parse a single line
         self.device_parse()
         self.symbol = self.scanner.get_symbol()
         print(self.symbol.string)
@@ -181,6 +182,7 @@ class Parser:
             print(self.symbol.string)
             self.symbol = self.scanner.get_symbol()
             if self.symbol.type == self.scanner.RIGHT_BRACKET:
+                # Search for } which ends section
                 print(self.symbol.string)
                 self.devices_parsed = True
                 self.sections_complete += 1
@@ -199,6 +201,7 @@ class Parser:
             self.advance_line_error()
 
         elif self.symbol.id in self.device_names:
+            # Check if name has already been used
             self.parse_errors += 1
             Error(3, self.symbol)
             self.advance_line_error()
@@ -219,6 +222,7 @@ class Parser:
                 print(self.symbol.string)
 
                 if self.symbol.id not in self.device_IDs:
+                    # Check that device type is recognised
                     self.new_device_id = self.symbol.id
                     self.parse_errors += 1
                     Error(5, self.symbol)
@@ -317,14 +321,14 @@ class Parser:
         # For DTYPE format: name DASH name PERIOD DTYPE_INPUT
 
         if self.symbol.id not in self.device_names:
-            #  print("Not defined:", self.symbol.string)
+            # Check if device has been defined
             self.parse_errors += 1
             Error(10, self.symbol)
             self.advance_line_error()
 
         else:
             [in_device_id, in_port_id] = self.signame_in()
-
+            # Get next symbol and check it is -
             self.symbol = self.scanner.get_symbol()
 
             if self.symbol.type != self.scanner.DASH:
@@ -336,6 +340,7 @@ class Parser:
                 self.symbol = self.scanner.get_symbol()
                 print(self.symbol.string)
                 if self.symbol.id not in self.device_names:
+                    # Check device has been initialised
                     self.parse_errors += 1
                     Error(10, self.symbol)
                     self.advance_line_error()
@@ -343,6 +348,7 @@ class Parser:
                 elif self.devices.get_device(
                         self.symbol.id).device_kind == self.devices.D_TYPE:
                     out_device_id = self.symbol.id
+                    # Next symbol should be a .
                     self.symbol = self.scanner.get_symbol()
                     if self.symbol.type != self.scanner.PERIOD:
                         self.parse_errors += 1
@@ -350,6 +356,7 @@ class Parser:
                         self.advance_line_error()
 
                     else:
+                        # Check next symbol is a DTYPE input
                         self.symbol = self.scanner.get_symbol()
                         if self.symbol.id not in self.devices.dtype_input_ids:
                             self.parse_errors += 1
@@ -369,8 +376,8 @@ class Parser:
                 else:
 
                     out_device = self.devices.get_device(self.symbol.id)
-                    # out_device_id = out_device.device_id
                     out_device_id = self.symbol.id
+                    # Next symbol should be a .
                     self.symbol = self.scanner.get_symbol()
                     if self.symbol.type != self.scanner.PERIOD:
                         self.parse_errors += 1
@@ -380,6 +387,7 @@ class Parser:
                     else:
                         self.symbol = self.scanner.get_symbol()
                         out_port_id = self.symbol.id
+                        # Check next symbol is form Inumber
                         self.input_list = list(self.symbol.string)
                         if self.input_list[0] != "I":
                             self.parse_errors += 1
@@ -402,6 +410,7 @@ class Parser:
     def signame_in(self):
         """Return the device ID and port ID for a device."""
         in_device = self.devices.get_device(self.symbol.id)
+        # Check if the device is a DTYPE
         if in_device.device_kind == self.devices.D_TYPE:
             self.symbol = self.scanner.get_symbol()
             if self.symbol.type != self.scanner.PERIOD:
@@ -456,6 +465,7 @@ class Parser:
             self.parse_errors += 1
             Error(19, self.symbol)
             self.advance_line_error()
+        # Next symbol should be a binary number
         self.symbol = self.scanner.get_symbol()
         if self.symbol.string != "0" and self.symbol.string != "1":
             self.parse_errors += 1
@@ -467,6 +477,7 @@ class Parser:
             Error(20, self.symbol)
             self.advance_line_error()
         elif self.symbol.string == "1":
+            # Only do anything if switch = 1 as all initialised to 0
             self.devices.set_switch(switch_set_ID, 1)
 
         self.symbol = self.scanner.get_symbol()
@@ -491,7 +502,6 @@ class Parser:
             while self.symbol.type == self.scanner.SEMICOLON:
                 self.symbol = self.scanner.get_symbol()
                 if self.symbol.type == self.scanner.RIGHT_BRACKET:
-                    # print(self.symbol.string)
                     self.sections_complete += 1
                     self.monitor_parsed = True
                     break
@@ -502,6 +512,7 @@ class Parser:
         """Parse a line in Monitor."""
         # Expected format : name SEMICOLON
         if self.symbol.id not in self.device_names:
+            # Check device has been initialised
             self.parse_errors += 1
             Error(24, self.symbol)
             self.advance_line_error()
