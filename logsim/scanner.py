@@ -120,7 +120,9 @@ class Scanner:
         """
         symbol = Symbol()
         self.skip_spaces()  # current character now not whitespace
-        self.skip_comments()
+        while self.current_character == "/":
+            self.skip_comments()
+            self.skip_spaces()
         self.skip_unused()
         symbol.line_number = self.current_line_number
         symbol.start_char_number = self.current_char_number
@@ -179,7 +181,7 @@ class Scanner:
         """
         char = self.file.read(1)
         self.current_character = char
-        if(self.current_character == '\n'):
+        if (self.current_character == '\n'):
             self.current_line_number += 1
             self.current_char_number = 0
         else:
@@ -207,6 +209,7 @@ class Scanner:
                 while True:
                     self.advance()
                     if self.current_character == "\n":
+                        #self.advance()
                         break
             elif self.current_character == "*":
                 while True:
@@ -214,6 +217,7 @@ class Scanner:
                     if self.current_character == "*":
                         self.advance()
                         if self.current_character == "/":
+                            #self.advance()
                             break
     def skip_unused(self):
         used = ('{','}','=','.','-',';','')
