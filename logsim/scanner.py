@@ -28,7 +28,8 @@ class Symbol:
     def __init__(self):
         """Initialise symbol properties."""
         self.type = None
-        self.id = None      # number if symbol is a number
+        self.id = None # number if symbol is a number
+
         # extended to include symbol's line and character number
         self.number = None
         self.line_number = None
@@ -36,6 +37,10 @@ class Symbol:
         self.end_char_number = None
         self.string = None
 
+        # also added path, file, and symbols
+        self.path = None
+        self.file = None
+        self.tokens = None
 
 class Scanner:
 
@@ -60,8 +65,6 @@ class Scanner:
         """"Open specified file and initialise reserved words and IDs."""
         # opens specified file
         self.path = path
-        # self.file  = file
-        # opens specified file
 
         try:
             # Open and return the file specified by path for reading
@@ -69,15 +72,31 @@ class Scanner:
         except IOError:
             print("error, can't find or open file")
             sys.exit()
+
+        #setup lines
+        read = self.file.read() #reads file to string read
+        # ensures all punctuation has spacing
+        read = read.replace(';',' ; ')
+        read = read.replace('{', ' { ') # left bracket
+        read = read.replace('}', ' } ') # right bracket
+        read = read.replace('=', ' = ') # equals
+        read = read.replace('.', ' . ') # period
+        read = read.replace('-', ' - ') # dash
+        read = read.replace(';',' ; ')  # semicolon
+        read = read.replace('//',' // ')  # slc
+        read = read.replace('/*',' /* ')  # start mlc
+        read = read.replace('*/',' */ ')  # end mlc
+
+        # breaks read string to array of lines
+        lines = read.split('\n')
+        # makes each line an array of symbols by spliting by whitespace
+        arr = []
+        for i in lines:
+            arr.append(i.split())
+        self.tokens = arr
+        print(self.tokens)
         # initialises reserved words and IDs
         self.names = names
-
-        # SIMPLE EBNF
-
-        # self.symbol_type_list = [self.COMMA, self.SEMICOLON, self.EQUALS,
-        #     self.KEYWORD, self.NUMBER, self.NAME, self.EOF] = range(7)
-
-        # self.keywords_list = ["DEVICES", "CONNECT", "MONITOR", "END"]
 
         # OUR EBNF
         self.symbol_type_list = [
@@ -93,10 +112,6 @@ class Scanner:
             "firstchange"
         ]
 
-        # SIMPLE EBNF
-        # [self.DEVICES_ID, self.CONNECT_ID, self.MONITOR_ID,
-        #    self.END_ID] = self.names.lookup(self.keywords_list)
-
         # OUR EBNF
         [
             self.NETWORK_ID, self.DEVICES_ID, self.CLOCK_ID, self.SWITCH_ID,
@@ -107,13 +122,16 @@ class Scanner:
             ] = self.names.lookup(self.keywords_list)
 
         # initialise current character to be first character
-        char = self.file.read(1)
+        char = self.tokens[0][0]
         self.current_character = char
 
         # initialise line number and character number counters
         self.current_line_number = 1
         self.current_char_number = 1
         if char == '\n':  self.current_line_number += 1
+        self.skip_comments()
+        self.skip_unused()
+        self.symbol_num = 0
 
     def get_symbol(self):
         """
@@ -121,13 +139,12 @@ class Scanner:
 
         RETURN: Symbol - the next symbol from input file of scanner instance
         """
-        symbol = Symbol()
-        self.skip_spaces()  # current character now not whitespace
-        self.skip_comments()
-        self.skip_unused()
+        if self.symbol_num == len(self.tokens[self.current_line_number - 1]):
+            self.current_line_number += 1
+            self.current_char_number = 1
+        else:
+            self.symbol_num += 1
         symbol.line_number = self.current_line_number
-        symbol.start_char_number = self.current_char_number
-        symbol.end_char_number = self.current_char_number
         if self.current_character.isalpha():  # name
             name_string = self.get_name()
             symbol.end_char_number += len(name_string)
@@ -173,59 +190,58 @@ class Scanner:
             self.advance()
         return symbol
 
-    def advance(self):
-        # Need to advance once to get to fist character of file!
-        """advance: reads the next character from the definition file
-        and places it in current_character
-
-        RETURN: None
-        """
-        char = self.file.read(1)
-        self.current_character = char
-        if(self.current_character == '\n'):
-            self.current_line_number += 1
-            self.current_char_number = 0
-        else:
-            self.current_char_number += 1
-
-    def skip_spaces(self):
-        """
-        Skips whitespace until a non-whitespace character is reached.
-        It calls advance until current_character is not whitespace.
-
-        Only skips to next non-whitespace character if current character is
-        is a space. Then it will skip all whitespace between the current
-        space until the next non whitespace character
-
-        RETURN: None
-        """
-        while self.current_character.isspace():
-            self.advance()
-
-
     def skip_comments(self):
-        if self.current_character == "/":      #comment
-            self.advance()
-            if self.current_character == "/":   #single line comment
-                while True:
-                    self.advance()
-                    if self.current_character == "\n":
-                        break
-            elif self.current_character == "*":
-                while True:
-                    self.advance()
-                    if self.current_character == "*":
-                        self.advance()
-                        if self.current_character == "/":
-                            break
+        # remove single line comments
+        # slc - single line comments
+        # mlc - multi line comments
+        # ln - line number
+        # cn - character number
+
+        #remove slc
+        removed_slc = []
+        for i in self.tokens:
+            if '//' not in i and len(i) != 0:
+                removed_slc.append(i)
+        print("removed slc")
+        print(removed_slc)
+
+        #remove mlc
+        count_mlc = 0
+        removed_mlc = []
+        for l in range(len(removed_slc)):
+            line = []
+            for c in range(len(removed_slc[l])):
+                if removed_slc[l][c] == '/*':
+                    count_mlc += 1
+                if removed_slc[l][c] == '*/':
+                    count_mlc -= 1
+                    continue
+                if count_mlc != 1:
+                    line.append(removed_slc[l][c])
+            if len(line) != 0:
+                removed_mlc.append(line)
+        self.tokens = removed_mlc
+        print("tokens after removing comments")
+        print(self.tokens)
+
     def skip_unused(self):
-        used = ('{','}','=','.','-',';','')
-        while True:
-            if self.current_character.isalnum():
-                break
-            if self.current_character in used:
-                break
-            self.advance()
+        #removes any unused characters:
+        used = ('{','}','=','.','-',';',' ')
+        removed_unused = []
+        for l in range(len(self.tokens)):
+            line = []
+            for t in self.tokens[l]:
+                token = ""
+                for c in t:
+                    if c.isalnum():
+                        token += c
+                    if c in used:
+                        token += c
+                if token != '':
+                    line.append(token)
+            if len(line) != 0:
+                removed_unused.append(line)
+        self.tokens = removed_unused
 
     def get_name(self):
         """
