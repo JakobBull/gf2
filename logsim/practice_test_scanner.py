@@ -32,6 +32,8 @@ def main():
         scan = Scanner(path, Names())
         print("scanning from: " + path)
         print("")
+        #symbol = scan.get_symbol()
+        print(scan.pre_process())
         print("type\tid\tline#\tstart_char#\tend_char#\tstring\t\t\tnumber")
         while True:
             symbol = scan.get_symbol()
@@ -42,8 +44,9 @@ def main():
             print(symbol.end_char_number, end="\t\t")
             print(symbol.string, end="\t\t\t")
             print(symbol.number)
-            if(symbol.type == scan.EOF):
-                break
+            #if(symbol.type == scan.EOF):
+            #    break
+
 
 if __name__ == "__main__":
     main()

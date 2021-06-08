@@ -35,6 +35,8 @@ class Symbol:
         self.start_char_number = None
         self.end_char_number = None
         self.string = None
+        self.text = None
+        self.index = 0
 
 
 class Scanner:
@@ -71,7 +73,6 @@ class Scanner:
             sys.exit()
         # initialises reserved words and IDs
         self.names = names
-
         # SIMPLE EBNF
 
         # self.symbol_type_list = [self.COMMA, self.SEMICOLON, self.EQUALS,
@@ -106,6 +107,7 @@ class Scanner:
             self.starttime_ID, self.period_ID, self.firstchange_ID
             ] = self.names.lookup(self.keywords_list)
 
+        self.text = self.file.read()
         # initialise current character to be first character
         char = self.file.read(1)
         self.current_character = char
@@ -115,6 +117,26 @@ class Scanner:
         self.current_char_number = 1
         if char == '\n':  self.current_line_number += 1
 
+    def pre_process(self):
+        in_slc = False
+        in_mlc = False
+        post_text = ""
+        for i in range(len(self.text)-1):
+            if self.text[i] == '/' and self.text[i+1] == '/':
+                in_slc = True
+            if self.text[i] == '/' and self.text[i+1] == '*':
+                in_mlc = True
+            if self.text[i] == '\n':
+                in_slc = False
+            if self.text[i-2] == '*' and self.text[i-1] == '/':
+                in_mlc = False
+
+            used = ('{','}','=','.','-',';',' ', '\n','\t', '')
+            if not in_slc and not in_mlc and self.text[i].isalnum() or self.text[i] in used:
+                post_text += self.text[i]
+        self.text = post_text
+        return post_text
+
     def get_symbol(self):
         """
         Translates the next sequence of characters into a symbol.
@@ -123,8 +145,8 @@ class Scanner:
         """
         symbol = Symbol()
         self.skip_spaces()  # current character now not whitespace
-        self.skip_comments()
-        self.skip_unused()
+        #self.skip_comments()
+        #self.skip_unused()
         symbol.line_number = self.current_line_number
         symbol.start_char_number = self.current_char_number
         symbol.end_char_number = self.current_char_number
@@ -180,7 +202,8 @@ class Scanner:
 
         RETURN: None
         """
-        char = self.file.read(1)
+        self.index += 1
+        char = self.text[self.index]
         self.current_character = char
         if(self.current_character == '\n'):
             self.current_line_number += 1
