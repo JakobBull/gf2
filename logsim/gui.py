@@ -1104,7 +1104,7 @@ class FrameManager:
         """
         self.content = self.menu.text_editor.text.GetValue()
         self.file = io.StringIO(self.content)
-        self.scanner = Scanner(self.path, self.file, self.names)
+        self.scanner = Scanner(self.path, self.names)
         self.parser = Parser(
             self.names,
             self.devices,

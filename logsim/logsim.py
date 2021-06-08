@@ -79,7 +79,8 @@ def main(arg_list):
             # Initialise an instance of the gui.Gui() class
             gui.FrameManager("Logic Simulator", names, devices, network,
                       monitors)"""
-        gui.FrameManager("Logic Simulator")
+        language = sys.argv[-1]
+        gui.FrameManager("Logic Simulator", language)
 
 if __name__ == "__main__":
     main(sys.argv[1:])
